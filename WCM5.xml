@@ -29,7 +29,7 @@ clock t, pt, rt, evet, CSsdpT, evesdpT;</declaration>
 		</location>
 		<location id="id1" x="680" y="255">
 			<name x="603" y="280">WaitSDPResponse</name>
-			<label kind="invariant" x="586" y="221">EVclock[idEV]&lt;= 3</label>
+			<label kind="invariant" x="586" y="221">EVclock[idEV]&lt;= 25</label>
 		</location>
 		<location id="id2" x="851" y="255">
 			<name x="784" y="212">ReceivedSDPResponse</name>
@@ -39,18 +39,18 @@ clock t, pt, rt, evet, CSsdpT, evesdpT;</declaration>
 		</location>
 		<location id="id4" x="689" y="-136">
 			<name x="646" y="-179">TCPReq</name>
-			<label kind="invariant" x="663" y="-76">EVclock[idEV] &lt;= 20</label>
+			<label kind="invariant" x="663" y="-76">EVclock[idEV] &lt;= 200</label>
 		</location>
 		<location id="id5" x="365" y="255">
 			<name x="339" y="280">CheckBatt</name>
 		</location>
 		<location id="id6" x="528" y="-136">
 			<name x="485" y="-179">TCPHandShake</name>
-			<label kind="invariant" x="518" y="-93">EVclock[idEV] &lt;= 20</label>
+			<label kind="invariant" x="518" y="-93">EVclock[idEV] &lt;= 200</label>
 		</location>
 		<location id="id7" x="178" y="-136">
 			<name x="127" y="-179">TLSHandShake</name>
-			<label kind="invariant" x="160" y="-102">EVclock[idEV] &lt;= 20</label>
+			<label kind="invariant" x="160" y="-102">EVclock[idEV] &lt;= 200</label>
 		</location>
 		<location id="id8" x="850" y="357">
 			<name x="773" y="374">EVESDPResponse</name>
@@ -61,48 +61,48 @@ clock t, pt, rt, evet, CSsdpT, evesdpT;</declaration>
 		</location>
 		<location id="id10" x="603" y="476">
 			<name x="552" y="493">EveTCPReq</name>
-			<label kind="invariant" x="561" y="425">EVclock[idEV] &lt;= 20</label>
+			<label kind="invariant" x="561" y="425">EVclock[idEV] &lt;= 200</label>
 		</location>
 		<location id="id11" x="306" y="476">
 			<name x="229" y="493">EveTCPHandShake</name>
-			<label kind="invariant" x="221" y="416">EVclock[idEV] &lt;= 20</label>
+			<label kind="invariant" x="221" y="416">EVclock[idEV] &lt;= 200</label>
 		</location>
 		<location id="id12" x="-136" y="476">
 			<name x="-187" y="501">EveTLSHandShake</name>
-			<label kind="invariant" x="-178" y="433">EVclock[idEV] &lt;= 20</label>
+			<label kind="invariant" x="-178" y="433">EVclock[idEV] &lt;= 200</label>
 		</location>
 		<location id="id13" x="-322" y="-136">
 			<name x="-356" y="-179">TLSReady</name>
-			<label kind="invariant" x="-382" y="-119">EVclock[idEV] &lt;= 20</label>
+			<label kind="invariant" x="-382" y="-119">EVclock[idEV] &lt;= 200</label>
 		</location>
 		<location id="id14" x="-331" y="476">
 			<name x="-374" y="493">EveTLSReady</name>
-			<label kind="invariant" x="-416" y="442">EVclock[idEV] &lt;= 20</label>
+			<label kind="invariant" x="-416" y="442">EVclock[idEV] &lt;= 200</label>
 		</location>
 		<location id="id15" x="527" y="255">
 			<name x="467" y="280">SendSDPRequest</name>
 		</location>
 		<location id="id16" x="-323" y="-25">
 			<name x="-374" y="0">SendReq</name>
-			<label kind="invariant" x="-399" y="59">EVclock[idEV]&lt;= 20</label>
+			<label kind="invariant" x="-399" y="59">EVclock[idEV]&lt;= 200</label>
 		</location>
 		<location id="id17" x="-144" y="-25">
 			<name x="-154" y="-59">Pass</name>
-			<label kind="invariant" x="-154" y="-8">EVclock[idEV] &lt;= 20</label>
+			<label kind="invariant" x="-154" y="-8">EVclock[idEV] &lt;= 200</label>
 		</location>
 		<location id="id18" x="51" y="-25">
 			<name x="25" y="-93">SendChaReq</name>
 		</location>
 		<location id="id19" x="204" y="-25">
 			<name x="170" y="-59">Charging</name>
-			<label kind="invariant" x="136" y="-8">EVclock[idEV] &lt;= 600</label>
+			<label kind="invariant" x="136" y="-8">EVclock[idEV] &lt;= 6000</label>
 		</location>
 		<location id="id20" x="-144" y="51">
 			<name x="-154" y="17">Fail</name>
 		</location>
 		<location id="id21" x="-331" y="374">
 			<name x="-306" y="382">SendReqtoEVE</name>
-			<label kind="invariant" x="-341" y="391">EVclock[idEV]&lt;= 20</label>
+			<label kind="invariant" x="-341" y="391">EVclock[idEV]&lt;= 200</label>
 		</location>
 		<location id="id22" x="-42" y="-76">
 			<name x="-102" y="-102">EveIntercept</name>
@@ -123,7 +123,7 @@ clock t, pt, rt, evet, CSsdpT, evesdpT;</declaration>
 		<transition id="id25">
 			<source ref="id1"/>
 			<target ref="id15"/>
-			<label kind="guard" x="596" y="187">EVclock[idEV] &gt;= 3</label>
+			<label kind="guard" x="596" y="187">EVclock[idEV] &gt;= 25</label>
 			<nail x="578" y="187"/>
 		</transition>
 		<transition id="id26">
@@ -289,38 +289,38 @@ EVclock[idEV] = 0</label>
 		</location>
 		<location id="id52" x="357" y="-76">
 			<name x="314" y="-118">TCPReqReceived</name>
-			<label kind="invariant" x="347" y="-59">t &lt;= 20</label>
+			<label kind="invariant" x="347" y="-59">t &lt;= 200</label>
 		</location>
 		<location id="id53" x="170" y="-76">
 			<name x="128" y="-118">TCPHandShake</name>
-			<label kind="invariant" x="160" y="-59">t &lt;= 20</label>
+			<label kind="invariant" x="160" y="-59">t &lt;= 200</label>
 		</location>
 		<location id="id54" x="-76" y="-76">
 			<name x="-119" y="-118">TLSReqRecieved</name>
-			<label kind="invariant" x="-86" y="-59">t &lt;= 20</label>
+			<label kind="invariant" x="-86" y="-59">t &lt;= 200</label>
 		</location>
 		<location id="id55" x="-544" y="-76">
 			<name x="-578" y="-118">TLSReady</name>
-			<label kind="invariant" x="-554" y="-59">t &lt;= 20</label>
+			<label kind="invariant" x="-554" y="-59">t &lt;= 200</label>
 		</location>
 		<location id="id56" x="-544" y="42">
 			<name x="-595" y="59">CheckAutReq</name>
-			<label kind="invariant" x="-586" y="76">t &lt;= 20</label>
+			<label kind="invariant" x="-586" y="76">t &lt;= 200</label>
 		</location>
 		<location id="id57" x="-382" y="42">
 			<name x="-399" y="8">AcceptEV</name>
-			<label kind="invariant" x="-392" y="59">t &lt;= 20</label>
+			<label kind="invariant" x="-392" y="59">t &lt;= 200</label>
 		</location>
 		<location id="id58" x="-221" y="42">
 			<name x="-231" y="8">SendKey</name>
 		</location>
 		<location id="id59" x="-51" y="42">
 			<name x="-110" y="0">ChargingEnd</name>
-			<label kind="invariant" x="-61" y="59">t &lt;= 20</label>
+			<label kind="invariant" x="-61" y="59">t &lt;= 200</label>
 		</location>
 		<location id="id60" x="93" y="42">
 			<name x="68" y="0">NotePT</name>
-			<label kind="invariant" x="83" y="59">t &lt;= 20</label>
+			<label kind="invariant" x="83" y="59">t &lt;= 200</label>
 		</location>
 		<location id="id61" x="-382" y="110">
 			<name x="-399" y="76">RejectEV</name>
@@ -411,11 +411,11 @@ EVclock[idEV] = 0</label>
 		</location>
 		<location id="id77" x="-85" y="-25">
 			<name x="-119" y="-59">ReceiveSDP</name>
-			<label kind="invariant" x="-95" y="-8">CSsdpT &lt;= 10</label>
+			<label kind="invariant" x="-95" y="-8">CSsdpT &lt;= 100</label>
 		</location>
 		<location id="id78" x="51" y="-25">
 			<name x="41" y="-59">SendSDPResponse</name>
-			<label kind="invariant" x="41" y="-8">CSsdpT &lt;= 3</label>
+			<label kind="invariant" x="41" y="-8">CSsdpT &lt;= 25</label>
 		</location>
 		<init ref="id76"/>
 		<transition id="id79">
@@ -427,7 +427,7 @@ EVclock[idEV] = 0</label>
 		<transition id="id80">
 			<source ref="id77"/>
 			<target ref="id76"/>
-			<label kind="guard" x="-136" y="-85">CSsdpT &gt;= 3</label>
+			<label kind="guard" x="-136" y="-85">CSsdpT &gt;= 25</label>
 			<nail x="-178" y="-127"/>
 		</transition>
 		<transition id="id81">
@@ -457,7 +457,7 @@ EVclock[idEV] = 0</label>
 		</location>
 		<location id="id85" x="34" y="-42">
 			<name x="-8" y="-85">CheckReq</name>
-			<label kind="invariant" x="-25" y="-25">pt &lt;= 20</label>
+			<label kind="invariant" x="-25" y="-25">pt &lt;= 200</label>
 		</location>
 		<location id="id86" x="170" y="-42">
 			<name x="153" y="-85">Pass</name>
@@ -470,7 +470,7 @@ EVclock[idEV] = 0</label>
 		</location>
 		<location id="id89" x="8" y="-153">
 			<name x="-2" y="-187">NotePT</name>
-			<label kind="invariant" x="-17" y="-136">pt &lt;= 20</label>
+			<label kind="invariant" x="-17" y="-136">pt &lt;= 200</label>
 		</location>
 		<location id="id90" x="-255" y="-153">
 			<name x="-265" y="-187">SendBill</name>
@@ -519,7 +519,7 @@ EVclock[idEV] = 0</label>
 		</location>
 		<location id="id99" x="102" y="-59">
 			<name x="59" y="-93">ReceivedKey</name>
-			<label kind="invariant" x="92" y="-42">rt &lt;= 20</label>
+			<label kind="invariant" x="92" y="-42">rt &lt;= 200</label>
 		</location>
 		<location id="id100" x="102" y="51">
 			<name x="68" y="68">SendKey</name>
@@ -564,19 +564,19 @@ EVclock[idEV] = 0</label>
 		</location>
 		<location id="id109" x="110" y="-102">
 			<name x="68" y="-144">TCPReqReceived</name>
-			<label kind="invariant" x="100" y="-85">evet &lt;= 20</label>
+			<label kind="invariant" x="100" y="-85">evet &lt;= 200</label>
 		</location>
 		<location id="id110" x="-34" y="-102">
 			<name x="-85" y="-144">TCPHandShake</name>
-			<label kind="invariant" x="-44" y="-85">evet &lt;= 20</label>
+			<label kind="invariant" x="-44" y="-85">evet &lt;= 200</label>
 		</location>
 		<location id="id111" x="-323" y="-102">
 			<name x="-383" y="-144">TLSReqRecived</name>
-			<label kind="invariant" x="-331" y="-85">evet &lt;= 20</label>
+			<label kind="invariant" x="-331" y="-85">evet &lt;= 200</label>
 		</location>
 		<location id="id112" x="-807" y="-102">
 			<name x="-833" y="-144">TLSReady</name>
-			<label kind="invariant" x="-817" y="-85">evet &lt;= 20</label>
+			<label kind="invariant" x="-817" y="-85">evet &lt;= 200</label>
 		</location>
 		<location id="id113" x="-807" y="17">
 			<name x="-841" y="34">ReceivedEVInfo</name>
@@ -623,11 +623,11 @@ EVclock[idEV] = 0</label>
 		</location>
 		<location id="id121" x="-59" y="-59">
 			<name x="-69" y="-93">DetectSDP</name>
-			<label kind="invariant" x="-69" y="-42">evesdpT &lt;= 10</label>
+			<label kind="invariant" x="-69" y="-42">evesdpT &lt;= 100</label>
 		</location>
 		<location id="id122" x="94" y="-59">
 			<name x="84" y="-93">SendFakeResponse</name>
-			<label kind="invariant" x="84" y="-42">evesdpT &lt;= 3</label>
+			<label kind="invariant" x="84" y="-42">evesdpT &lt;= 25</label>
 		</location>
 		<init ref="id120"/>
 		<transition id="id123">
@@ -639,7 +639,7 @@ EVclock[idEV] = 0</label>
 		<transition id="id124">
 			<source ref="id121"/>
 			<target ref="id120"/>
-			<label kind="guard" x="-127" y="-127">evesdpT &gt;= 3</label>
+			<label kind="guard" x="-127" y="-127">evesdpT &gt;= 25</label>
 			<nail x="-153" y="-153"/>
 		</transition>
 		<transition id="id125">
