@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+broadcast chan a;
+clock t;</declaration>
+	<template>
+		<name x="5" y="5">test</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id0" x="0" y="0">
+			<name x="-10" y="-34">q</name>
+			<urgent/>
+		</location>
+		<location id="id1" x="161" y="0">
+			<name x="151" y="-34">q1</name>
+			<urgent/>
+		</location>
+		<location id="id2" x="263" y="0">
+			<name x="253" y="-34">q2</name>
+			<urgent/>
+		</location>
+		<init ref="id0"/>
+		<transition id="id3">
+			<source ref="id2"/>
+			<target ref="id0"/>
+			<nail x="136" y="51"/>
+		</transition>
+		<transition id="id4">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="179" y="-17">a!</label>
+		</transition>
+		<transition id="id5">
+			<source ref="id0"/>
+			<target ref="id1"/>
+		</transition>
+	</template>
+	<template>
+		<name>cs</name>
+		<location id="id6" x="-348" y="-102">
+			<name x="-358" y="-136">cs</name>
+			<urgent/>
+		</location>
+		<location id="id7" x="-178" y="-102">
+			<name x="-188" y="-136">send</name>
+		</location>
+		<location id="id8" x="-238" y="-195">
+			<name x="-248" y="-229">w</name>
+			<label kind="invariant" x="-263" y="-153">t&lt;=2</label>
+		</location>
+		<init ref="id6"/>
+		<transition id="id9">
+			<source ref="id8"/>
+			<target ref="id7"/>
+			<label kind="assignment" x="-208" y="-148">t = 0</label>
+		</transition>
+		<transition id="id10">
+			<source ref="id6"/>
+			<target ref="id8"/>
+			<label kind="assignment" x="-330" y="-148">t = 0</label>
+		</transition>
+		<transition id="id11">
+			<source ref="id7"/>
+			<target ref="id6"/>
+			<label kind="assignment" x="-279" y="-72">t= 0</label>
+			<nail x="-297" y="-42"/>
+		</transition>
+		<transition id="id12">
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="-280" y="-119">a?</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+
+// List one or more processes to be composed into a system.
+system test,cs;
+</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>Pr[&lt;=100](&lt;&gt; cs.send)</formula>
+			<comment/>
+			<option key="--diagnostic" value="0"/>
+		</query>
+	</queries>
+</nta>
