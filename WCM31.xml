@@ -11,7 +11,7 @@ chan EveSDPRes, EVETCPRes, EVETCPAck;
 chan AutReq, AutAck, AutReject, CharAck, CharFail, CharEnd, AutReqtoEVE, CharReqGet;
 
 chan KeyRSU, NotifyPT, BillRSU, BillPT, KeyPT, CharFailEnd, PTCharFail;
-const int N = 1;
+const int N = 2;
 const int ConcurSDPResThr = 10;
 typedef int[0,N-1] id_t;
 int Energy[N], local_ticket[N], local_EVEticket[N];
@@ -31,8 +31,9 @@ clock t, pt, rt, evet, CSsdpT, evesdpT;</declaration>
 			<name x="603" y="280">WaitSDPResponse</name>
 			<label kind="invariant" x="586" y="221">EVclock[idEV]&lt;= 3</label>
 		</location>
-		<location id="id2" x="851" y="255">
-			<name x="784" y="212">ReceivedSDPResponse</name>
+		<location id="id2" x="850" y="255">
+			<name x="783" y="212">ReceivedSDPResponse</name>
+			<label kind="invariant" x="840" y="272">EVclock[idEV] &lt;= 20</label>
 		</location>
 		<location id="id3" x="850" y="-136">
 			<name x="808" y="-170">TicketCheck</name>
@@ -54,7 +55,7 @@ clock t, pt, rt, evet, CSsdpT, evesdpT;</declaration>
 		</location>
 		<location id="id8" x="850" y="357">
 			<name x="773" y="374">EVESDPResponse</name>
-			<label kind="invariant" x="833" y="323">EVclock[idEV] &lt;= 200</label>
+			<label kind="invariant" x="833" y="323">EVclock[idEV] &lt;= 20</label>
 		</location>
 		<location id="id9" x="850" y="476">
 			<name x="773" y="493">EVETicketCheck</name>
@@ -692,6 +693,41 @@ system EV,CS,EVE,EVE2,PT, RSU, CSsdp, EVEsdp;
 			<formula>A[] not deadlock</formula>
 			<comment/>
 			<option key="--diagnostic" value="1"/>
+			<result outcome="success" type="quality" timestamp="2026-10-26 13:39:21 -0600">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] forall (i : id_t) local_ticket[i] &lt;= MaxServ</formula>
+			<comment/>
+		</query>
+		<query>
+			<formula>A[] forall(i : id_t) (EV(i).TicketCheck imply serv == local_ticket[i])</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-26 13:46:28 -0600">
+			</result>
+		</query>
+		<query>
+			<formula>A&lt;&gt; forall(i : int[0, N-1]) (EV(i).SendReq imply EV(i).Charging)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-26 13:49:59 -0600">
+			</result>
+		</query>
+		<query>
+			<formula>A[] forall(i : int[0, N-1]) forall(j : int[0, N-1]) (i != j imply not (EV(i).SendReq and EV(j).SendReq))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-26 13:52:34 -0600">
+			</result>
+		</query>
+		<query>
+			<formula>A[] forall(i : int[0, N-1]) (EV(i).Charging imply local_ticket[i] == 0)</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2026-10-26 13:58:08 -0600">
+			</result>
+		</query>
+		<query>
+			<formula/>
+			<comment/>
 		</query>
 		<query>
 			<formula>A[] not (EV(0).Charging &amp;&amp; EV(1).Charging)</formula>
