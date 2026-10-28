@@ -11,7 +11,7 @@ chan EveSDPRes, EVETCPRes, EVETCPAck;
 chan AutReq, AutAck, AutReject, CharAck, CharFail, CharEnd, AutReqtoEVE, CharReqGet;
 
 chan KeyRSU, NotifyPT, BillRSU, BillPT, KeyPT, CharFailEnd, PTCharFail;
-const int N = 2;
+const int N = 1;
 const int ConcurSDPResThr = 10;
 typedef int[0,N-1] id_t;
 int Energy[N], local_ticket[N], local_EVEticket[N];
@@ -689,6 +689,12 @@ EVclock[idEV] = 0</label>
 system EV,CS,EVE,EVE2,PT, RSU, CSsdp, EVEsdp;
 </system>
 	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-27 22:06:03 -0600">
+			</result>
+		</query>
 		<query>
 			<formula>A[] forall (i : id_t) local_ticket[i] &lt;= MaxServ</formula>
 			<comment/>
