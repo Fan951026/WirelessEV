@@ -692,29 +692,33 @@ system EV,CS,EVE,EVE2,PT, RSU, CSsdp, EVEsdp;
 		<query>
 			<formula>A[] forall (i : id_t) local_ticket[i] &lt;= MaxServ</formula>
 			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-27 19:21:45 -0600">
+			</result>
 		</query>
 		<query>
 			<formula>A[] forall(i : id_t) (EV(i).TicketCheck imply serv == local_ticket[i])</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2026-10-26 13:46:28 -0600">
+			<result outcome="success" type="quality" timestamp="2026-10-26 18:44:07 -0600">
 			</result>
 		</query>
 		<query>
 			<formula>A&lt;&gt; forall(i : int[0, N-1]) (EV(i).SendReq imply EV(i).Charging)</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2026-10-26 13:49:59 -0600">
+			<result outcome="success" type="quality" timestamp="2026-10-27 19:17:46 -0600">
 			</result>
 		</query>
 		<query>
-			<formula>A[] forall(i : int[0, N-1]) forall(j : int[0, N-1]) (i != j imply not (EV(i).SendReq and EV(j).SendReq))</formula>
+			<formula>A&lt;&gt; forall(i : id_t) (EV(i).SendReq imply EV(i).Fail)</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2026-10-26 13:52:34 -0600">
+			<option key="--diagnostic" value="1"/>
+			<result outcome="success" type="quality" timestamp="2026-10-27 19:18:19 -0600">
+				<option key="--diagnostic" value="1"/>
 			</result>
 		</query>
 		<query>
-			<formula>A[] forall(i : int[0, N-1]) (EV(i).Charging imply local_ticket[i] == 0)</formula>
+			<formula>A[] forall(i : int[0, N-1]) forall(j : int[0, N-1]) (i != j imply not (EV(i).Charging and EV(j).Charging))</formula>
 			<comment/>
-			<result outcome="failure" type="quality" timestamp="2026-10-26 13:58:08 -0600">
+			<result outcome="success" type="quality" timestamp="2026-10-27 19:18:50 -0600">
 			</result>
 		</query>
 		<query>
