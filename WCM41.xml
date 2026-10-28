@@ -11,7 +11,7 @@ chan EveSDPRes, EVETCPRes, EVETCPAck;
 chan AutReq, AutAck, AutReject, CharAck, CharFail, CharEnd, AutReqtoEVE, CharReqGet;
 
 chan KeyRSU, NotifyPT, BillRSU, BillPT, KeyPT, CharFailEnd, PTCharFail;
-const int N = 2;
+const int N = 3;
 const int ConcurSDPResThr = 10;
 typedef int[0,N-1] id_t;
 int Energy[N], local_ticket[N], local_EVEticket[N];
