@@ -11,7 +11,7 @@ chan EveSDPRes, EVETCPRes, EVETCPAck;
 chan AutReq, AutAck, AutReject, CharAck, CharFail, CharEnd, AutReqtoEVE, CharReqGet;
 
 chan KeyRSU, NotifyPT, BillRSU, BillPT, KeyPT, CharFailEnd, PTCharFail;
-const int N = 3;
+const int N = 1;
 const int ConcurSDPResThr = 10;
 typedef int[0,N-1] id_t;
 int Energy[N], local_ticket[N], local_EVEticket[N];
@@ -177,6 +177,7 @@ serv = (serv + 1) % MaxServ</label>
 			<source ref="id18"/>
 			<target ref="id19"/>
 			<label kind="synchronisation" x="102" y="-51">CharAck?</label>
+			<label kind="assignment" x="77" y="-25">EVclock[idEV] = 0</label>
 			<nail x="59" y="-25"/>
 		</transition>
 		<transition id="id34">
@@ -692,13 +693,13 @@ system EV,CS,EVE,EVE2,PT, RSU, CSsdp, EVEsdp;
 		<query>
 			<formula>A[] not deadlock</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2026-10-27 22:06:03 -0600">
+			<result outcome="success" type="quality" timestamp="2026-10-28 19:33:00 -0600">
 			</result>
 		</query>
 		<query>
 			<formula>A[] forall (i : id_t) local_ticket[i] &lt;= MaxServ</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2026-10-27 19:21:45 -0600">
+			<result outcome="success" type="quality" timestamp="2026-10-28 17:03:00 -0600">
 			</result>
 		</query>
 		<query>
@@ -732,12 +733,21 @@ system EV,CS,EVE,EVE2,PT, RSU, CSsdp, EVEsdp;
 			<comment/>
 		</query>
 		<query>
-			<formula/>
+			<formula>A[] forall(i : int[0, N-1]) (EV(i).Charging imply EVclock[i] &lt;= 600)</formula>
 			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-28 21:13:15 -0600">
+			</result>
+		</query>
+		<query>
+			<formula>A[] forall(i : int[0, N-1]) (EV(i).SendReq imply EVclock[i] &lt;= 20)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-28 21:13:46 -0600">
+			</result>
 		</query>
 		<query>
 			<formula/>
 			<comment/>
+			<option key="--diagnostic" value="1"/>
 		</query>
 		<query>
 			<formula/>

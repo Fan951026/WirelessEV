@@ -1,0 +1,1628 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+broadcast chan SDPReq;
+broadcast chan CharReq;
+broadcast chan SDPRes, EVTCPReq, EVTCPAck, CSTCPRes, EVToEVETCPReq;
+//chan SDPReq, SDPRes, EVTCPReq, EVTCPAck, CSTCPRes, EVToEVETCPReq;
+broadcast chan TLSReq, CSTLSRes, EVTLSRes, EVETLSRes, EVETLSAck, CSTLSAck;
+broadcast chan EveSDPRes, EVETCPRes, EVETCPAck;
+broadcast chan AutReq, AutAck, AutReject, CharAck, CharFail, CharEnd, AutReqtoEVE, CharReqGet;
+
+broadcast chan KeyRSU, NotifyPT, BillRSU, BillPT, KeyPT, CharFailEnd, PTCharFail;
+const int N = 1;
+const int ConcurSDPResThr = 10;
+typedef int[0,N-1] id_t;
+int Energy[N], local_ticket[N], local_EVEticket[N];
+int ticket = 1, EVEticket = 1, serv = 1, servEVE = 1;
+const int MaxServ = 3;
+int m = 0;
+int m1 = 1;
+int m2 = 1;
+int m3 = 1;
+clock EVclock[N];
+clock t, pt, rt, evet, CSsdpT, evesdpT;</declaration>
+	<template>
+		<name x="5" y="5">EV</name>
+		<parameter>const id_t idEV</parameter>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id0" x="204" y="255">
+			<name x="194" y="221">EV</name>
+			<label kind="invariant" x="194" y="272">EVclock[idEV] &lt;= 1</label>
+		</location>
+		<location id="id1" x="680" y="255">
+			<name x="603" y="280">WaitSDPResponse</name>
+			<label kind="invariant" x="586" y="221">EVclock[idEV]&lt;= 3</label>
+		</location>
+		<location id="id2" x="850" y="255">
+			<name x="783" y="212">ReceivedSDPResponse</name>
+			<label kind="invariant" x="840" y="272">EVclock[idEV] &lt;= 20</label>
+		</location>
+		<location id="id3" x="850" y="-136">
+			<name x="808" y="-170">TicketCheck</name>
+			<urgent/>
+		</location>
+		<location id="id4" x="689" y="-136">
+			<name x="646" y="-179">TCPReq</name>
+			<label kind="invariant" x="663" y="-76">EVclock[idEV] &lt;= 20</label>
+		</location>
+		<location id="id5" x="365" y="255">
+			<name x="339" y="280">CheckBatt</name>
+			<committed/>
+		</location>
+		<location id="id6" x="528" y="-136">
+			<name x="485" y="-179">TCPHandShake</name>
+			<label kind="invariant" x="518" y="-93">EVclock[idEV] &lt;= 20</label>
+		</location>
+		<location id="id7" x="178" y="-136">
+			<name x="127" y="-178">TLSHandShake</name>
+			<label kind="invariant" x="160" y="-102">EVclock[idEV] &lt;= 20</label>
+		</location>
+		<location id="id8" x="850" y="357">
+			<name x="773" y="374">EVESDPResponse</name>
+			<label kind="invariant" x="840" y="374">EVclock[idEV] &lt;= 20</label>
+		</location>
+		<location id="id9" x="850" y="476">
+			<name x="773" y="493">EVETicketCheck</name>
+			<urgent/>
+		</location>
+		<location id="id10" x="603" y="476">
+			<name x="552" y="493">EveTCPReq</name>
+			<label kind="invariant" x="561" y="425">EVclock[idEV] &lt;= 20</label>
+		</location>
+		<location id="id11" x="306" y="476">
+			<name x="229" y="493">EveTCPHandShake</name>
+			<label kind="invariant" x="221" y="416">EVclock[idEV] &lt;= 20</label>
+		</location>
+		<location id="id12" x="-136" y="476">
+			<name x="-187" y="501">EveTLSHandShake</name>
+			<label kind="invariant" x="-178" y="433">EVclock[idEV] &lt;= 20</label>
+		</location>
+		<location id="id13" x="-322" y="-136">
+			<name x="-356" y="-179">TLSReady</name>
+			<label kind="invariant" x="-382" y="-119">EVclock[idEV] &lt;= 20</label>
+		</location>
+		<location id="id14" x="-331" y="476">
+			<name x="-374" y="493">EveTLSReady</name>
+			<label kind="invariant" x="-416" y="442">EVclock[idEV] &lt;= 20</label>
+		</location>
+		<location id="id15" x="527" y="255">
+			<name x="467" y="280">SendSDPRequest</name>
+			<committed/>
+		</location>
+		<location id="id16" x="-323" y="-25">
+			<name x="-374" y="0">SendReq</name>
+			<label kind="invariant" x="-333" y="-8">EVclock[idEV] &lt;= 20</label>
+		</location>
+		<location id="id17" x="-144" y="-25">
+			<name x="-154" y="-59">Pass</name>
+			<label kind="exponentialrate" x="-154" y="9">2</label>
+		</location>
+		<location id="id18" x="51" y="-25">
+			<name x="25" y="-93">SendChaReq</name>
+			<urgent/>
+		</location>
+		<location id="id19" x="204" y="-25">
+			<name x="170" y="-59">Charging</name>
+			<label kind="invariant" x="136" y="-8">EVclock[idEV] &lt;= 600</label>
+		</location>
+		<location id="id20" x="-144" y="51">
+			<name x="-154" y="17">Fail</name>
+			<committed/>
+		</location>
+		<location id="id21" x="-331" y="374">
+			<name x="-306" y="382">SendReqtoEVE</name>
+			<urgent/>
+		</location>
+		<location id="id22" x="-42" y="-76">
+			<name x="-102" y="-102">EveIntercept</name>
+			<committed/>
+		</location>
+		<init ref="id0"/>
+		<transition id="id23">
+			<source ref="id10"/>
+			<target ref="id10"/>
+			<label kind="guard" x="562" y="510">EVclock[idEV] == 20</label>
+			<label kind="assignment" x="562" y="544">EVclock[idEV] = 0</label>
+			<nail x="637" y="544"/>
+			<nail x="544" y="544"/>
+		</transition>
+		<transition id="id24">
+			<source ref="id4"/>
+			<target ref="id4"/>
+			<label kind="guard" x="552" y="-246">EVclock[idEV] == 20</label>
+			<label kind="assignment" x="748" y="-212">EVclock[idEV] = 0</label>
+			<nail x="620" y="-212"/>
+			<nail x="731" y="-204"/>
+		</transition>
+		<transition id="id25">
+			<source ref="id11"/>
+			<target ref="id12"/>
+			<label kind="synchronisation" x="59" y="459">TLSReq!</label>
+			<label kind="assignment" x="17" y="476">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id26">
+			<source ref="id7"/>
+			<target ref="id13"/>
+			<label kind="synchronisation" x="-8" y="-161">CSTLSAck?</label>
+			<label kind="assignment" x="-76" y="-127">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id27">
+			<source ref="id1"/>
+			<target ref="id15"/>
+			<label kind="guard" x="596" y="187">EVclock[idEV] &gt;= 3</label>
+			<nail x="578" y="187"/>
+		</transition>
+		<transition id="id28">
+			<source ref="id22"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="-24" y="-76">CharReq!</label>
+			<label kind="assignment" x="-25" y="-59">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id29">
+			<source ref="id17"/>
+			<target ref="id22"/>
+			<label kind="guard" x="-118" y="-110">m == 1</label>
+			<label kind="synchronisation" x="-153" y="-102">CharReqGet!</label>
+			<label kind="assignment" x="-195" y="-76">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id30">
+			<source ref="id21"/>
+			<target ref="id0"/>
+			<label kind="assignment" x="-313" y="314">Energy[idEV] = 0,
+local_EVEticket[idEV] = 0,
+servEVE = (servEVE + 1) % MaxServ</label>
+		</transition>
+		<transition id="id31">
+			<source ref="id14"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="-331" y="408">AutReqtoEVE!</label>
+			<label kind="assignment" x="-331" y="425">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id32">
+			<source ref="id19"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="212" y="76">CharEnd!</label>
+			<label kind="assignment" x="204" y="25">Energy[idEV] = 0,
+local_ticket[idEV] = 0,
+serv = (serv + 1) % MaxServ,
+EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id33">
+			<source ref="id20"/>
+			<target ref="id15"/>
+			<label kind="assignment" x="-127" y="110">Energy[idEV] = 0,
+local_ticket[idEV] = 0,
+serv = (serv + 1) % MaxServ</label>
+		</transition>
+		<transition id="id34">
+			<source ref="id16"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-297" y="25">AutReject?</label>
+			<label kind="assignment" x="-305" y="13">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id35">
+			<source ref="id18"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="102" y="-51">CharAck?</label>
+			<label kind="assignment" x="77" y="-25">EVclock[idEV] = 0</label>
+			<nail x="59" y="-25"/>
+		</transition>
+		<transition id="id36">
+			<source ref="id17"/>
+			<target ref="id18"/>
+			<label kind="guard" x="-102" y="17">m == 1</label>
+			<label kind="synchronisation" x="-102" y="-42">CharReq!</label>
+			<label kind="assignment" x="-126" y="-25">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id37">
+			<source ref="id16"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-263" y="-42">AutAck?</label>
+			<label kind="assignment" x="-305" y="-25">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id38">
+			<source ref="id13"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="-322" y="-97">AutReq!</label>
+			<label kind="assignment" x="-374" y="-76">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id39">
+			<source ref="id15"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="562" y="255">SDPReq!</label>
+			<label kind="assignment" x="535" y="272">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id40">
+			<source ref="id5"/>
+			<target ref="id15"/>
+			<label kind="guard" x="365" y="255">Energy[idEV] &gt; 2</label>
+		</transition>
+		<transition id="id41">
+			<source ref="id12"/>
+			<target ref="id14"/>
+			<label kind="synchronisation" x="-280" y="459">EVETLSAck?</label>
+			<label kind="assignment" x="-313" y="476">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id42">
+			<source ref="id10"/>
+			<target ref="id11"/>
+			<label kind="synchronisation" x="408" y="459">EVETCPRes?</label>
+			<label kind="assignment" x="391" y="476">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id43">
+			<source ref="id9"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="705" y="442">EVToEVETCPReq!</label>
+			<label kind="assignment" x="706" y="476">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id44">
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="guard" x="680" y="399">servEVE == local_EVEticket[idEV]</label>
+			<label kind="assignment" x="850" y="416">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id45">
+			<source ref="id1"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="705" y="331">EveSDPRes?</label>
+			<label kind="assignment" x="382" y="323">local_EVEticket[idEV] = EVEticket,
+EVEticket = (EVEticket + 1)% MaxServ,
+EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id46">
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="409" y="-153">TLSReq!</label>
+			<label kind="assignment" x="376" y="-136">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id47">
+			<source ref="id4"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="562" y="-153">CSTCPRes?</label>
+			<label kind="assignment" x="546" y="-136">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id48">
+			<source ref="id5"/>
+			<target ref="id0"/>
+			<label kind="guard" x="212" y="297">Energy[idEV] &lt;= 2</label>
+			<nail x="289" y="297"/>
+		</transition>
+		<transition id="id49">
+			<source ref="id0"/>
+			<target ref="id5"/>
+			<label kind="select" x="212" y="178">EV_e : int[0,10]</label>
+			<label kind="assignment" x="195" y="195">Energy[idEV] = EV_e</label>
+		</transition>
+		<transition id="id50">
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="707" y="-170">m1 == 1</label>
+			<label kind="synchronisation" x="740" y="-153">EVTCPReq!</label>
+			<label kind="assignment" x="707" y="-136">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id51">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="722" y="153">serv == local_ticket[idEV]</label>
+			<label kind="assignment" x="850" y="59">EVclock[idEV] = 0</label>
+		</transition>
+		<transition id="id52">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="731" y="238">SDPRes?</label>
+			<label kind="assignment" x="467" y="110">local_ticket[idEV] = ticket,
+ticket = (ticket + 1)% MaxServ,
+EVclock[idEV] = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>CS</name>
+		<location id="id53" x="85" y="221">
+			<name x="75" y="187">CS</name>
+		</location>
+		<location id="id54" x="357" y="-76">
+			<name x="314" y="-118">TCPReqReceived</name>
+			<label kind="invariant" x="347" y="-59">t &lt;= 20</label>
+		</location>
+		<location id="id55" x="170" y="-76">
+			<name x="128" y="-118">TCPHandShake</name>
+			<label kind="invariant" x="160" y="-59">t &lt;= 20</label>
+		</location>
+		<location id="id56" x="-76" y="-76">
+			<name x="-119" y="-118">TLSReqRecieved</name>
+			<label kind="invariant" x="-86" y="-59">t &lt;= 20</label>
+		</location>
+		<location id="id57" x="-544" y="-76">
+			<name x="-578" y="-118">TLSReady</name>
+			<label kind="invariant" x="-554" y="-59">t &lt;= 20</label>
+		</location>
+		<location id="id58" x="-544" y="42">
+			<name x="-595" y="59">CheckAutReq</name>
+			<label kind="invariant" x="-586" y="76">t &lt;= 20</label>
+		</location>
+		<location id="id59" x="-382" y="42">
+			<name x="-399" y="8">AcceptEV</name>
+			<label kind="invariant" x="-392" y="59">t &lt;= 20</label>
+		</location>
+		<location id="id60" x="-221" y="42">
+			<name x="-231" y="8">SendKey</name>
+			<committed/>
+		</location>
+		<location id="id61" x="-51" y="42">
+			<name x="-110" y="0">ChargingEnd</name>
+			<label kind="invariant" x="-61" y="59">t &lt;= 20</label>
+		</location>
+		<location id="id62" x="93" y="42">
+			<name x="68" y="0">NotePT</name>
+			<label kind="invariant" x="83" y="59">t &lt;= 20</label>
+		</location>
+		<location id="id63" x="-382" y="110">
+			<name x="-399" y="76">RejectEV</name>
+			<committed/>
+		</location>
+		<location id="id64" x="221" y="42">
+			<name x="187" y="0">ReceivedBill</name>
+		</location>
+		<init ref="id53"/>
+		<transition id="id65">
+			<source ref="id56"/>
+			<target ref="id57"/>
+			<label kind="synchronisation" x="-280" y="-93">CSTLSAck!</label>
+			<label kind="assignment" x="-255" y="-68">t = 0</label>
+		</transition>
+		<transition id="id66">
+			<source ref="id53"/>
+			<target ref="id54"/>
+			<label kind="synchronisation" x="221" y="196">EVTCPReq?</label>
+			<label kind="assignment" x="103" y="225">t = 0,
+m1 = 0</label>
+			<nail x="357" y="221"/>
+		</transition>
+		<transition id="id67">
+			<source ref="id63"/>
+			<target ref="id53"/>
+			<label kind="assignment" x="-364" y="165">m1 = 1</label>
+		</transition>
+		<transition id="id68">
+			<source ref="id64"/>
+			<target ref="id53"/>
+			<label kind="assignment" x="103" y="131">m1 = 1</label>
+		</transition>
+		<transition id="id69">
+			<source ref="id62"/>
+			<target ref="id64"/>
+			<label kind="synchronisation" x="119" y="25">BillRSU?</label>
+			<label kind="assignment" x="111" y="42">t = 0</label>
+		</transition>
+		<transition id="id70">
+			<source ref="id58"/>
+			<target ref="id63"/>
+			<label kind="synchronisation" x="-518" y="93">AutReject!</label>
+		</transition>
+		<transition id="id71">
+			<source ref="id61"/>
+			<target ref="id62"/>
+			<label kind="synchronisation" x="-17" y="25">NotifyPT!</label>
+			<label kind="assignment" x="-33" y="42">t = 0</label>
+		</transition>
+		<transition id="id72">
+			<source ref="id60"/>
+			<target ref="id61"/>
+			<label kind="synchronisation" x="-203" y="25">CharEnd?</label>
+			<label kind="assignment" x="-203" y="42">t = 0</label>
+		</transition>
+		<transition id="id73">
+			<source ref="id59"/>
+			<target ref="id60"/>
+			<label kind="guard" x="-365" y="-8">m2 == 1</label>
+			<label kind="synchronisation" x="-364" y="25">KeyRSU!</label>
+			<label kind="assignment" x="-364" y="42">t = 0</label>
+		</transition>
+		<transition id="id74">
+			<source ref="id58"/>
+			<target ref="id59"/>
+			<label kind="synchronisation" x="-493" y="17">AutAck!</label>
+			<label kind="assignment" x="-526" y="42">t = 0</label>
+		</transition>
+		<transition id="id75">
+			<source ref="id57"/>
+			<target ref="id58"/>
+			<label kind="synchronisation" x="-535" y="-34">AutReq?</label>
+			<label kind="assignment" x="-544" y="-17">t = 0</label>
+		</transition>
+		<transition id="id76">
+			<source ref="id55"/>
+			<target ref="id56"/>
+			<label kind="synchronisation" x="17" y="-93">TLSReq?</label>
+			<label kind="assignment" x="59" y="-76">t = 0</label>
+		</transition>
+		<transition id="id77">
+			<source ref="id54"/>
+			<target ref="id55"/>
+			<label kind="synchronisation" x="255" y="-93">CSTCPRes!</label>
+			<label kind="assignment" x="248" y="-76">t = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>CSsdp</name>
+		<location id="id78" x="-306" y="-25">
+			<name x="-316" y="-59">CS</name>
+		</location>
+		<location id="id79" x="-85" y="-25">
+			<name x="-119" y="-59">ReceiveSDP</name>
+			<label kind="invariant" x="-95" y="-8">CSsdpT &lt;= 10</label>
+		</location>
+		<location id="id80" x="51" y="-25">
+			<name x="41" y="-59">SendSDPResponse</name>
+			<committed/>
+		</location>
+		<init ref="id78"/>
+		<transition id="id81">
+			<source ref="id80"/>
+			<target ref="id79"/>
+			<label kind="guard" x="1" y="-114">CSsdpT &lt;ConcurSDPResThr</label>
+			<nail x="-17" y="-136"/>
+		</transition>
+		<transition id="id82">
+			<source ref="id79"/>
+			<target ref="id78"/>
+			<label kind="guard" x="-136" y="-85">CSsdpT &gt;= 3</label>
+			<nail x="-178" y="-127"/>
+		</transition>
+		<transition id="id83">
+			<source ref="id80"/>
+			<target ref="id78"/>
+			<label kind="guard" x="0" y="8">CSsdpT &gt;=ConcurSDPResThr</label>
+			<label kind="assignment" x="-59" y="42">CSsdpT = 0</label>
+			<nail x="-136" y="51"/>
+		</transition>
+		<transition id="id84">
+			<source ref="id79"/>
+			<target ref="id80"/>
+			<label kind="synchronisation" x="-67" y="-42">SDPRes!</label>
+			<label kind="assignment" x="-67" y="-25">t = 0</label>
+		</transition>
+		<transition id="id85">
+			<source ref="id78"/>
+			<target ref="id79"/>
+			<label kind="synchronisation" x="-238" y="-42">SDPReq?</label>
+			<label kind="assignment" x="-255" y="-25">CSsdpT = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>PT</name>
+		<location id="id86" x="-136" y="-42">
+			<name x="-178" y="-85">ReceivedKey</name>
+			<urgent/>
+		</location>
+		<location id="id87" x="34" y="-42">
+			<name x="-8" y="-85">CheckReq</name>
+			<label kind="invariant" x="-25" y="-25">pt &lt;= 20</label>
+		</location>
+		<location id="id88" x="170" y="-42">
+			<name x="153" y="-85">Pass</name>
+			<committed/>
+		</location>
+		<location id="id89" x="-255" y="-42">
+			<name x="-265" y="-76">PT</name>
+		</location>
+		<location id="id90" x="170" y="-153">
+			<name x="144" y="-187">Charging</name>
+			<urgent/>
+		</location>
+		<location id="id91" x="8" y="-153">
+			<name x="-2" y="-187">NotePT</name>
+			<label kind="invariant" x="-17" y="-136">pt &lt;= 20</label>
+		</location>
+		<location id="id92" x="-255" y="-153">
+			<name x="-265" y="-187">SendBill</name>
+			<committed/>
+		</location>
+		<init ref="id89"/>
+		<transition id="id93">
+			<source ref="id92"/>
+			<target ref="id89"/>
+			<label kind="assignment" x="-255" y="-97">m3 = 1</label>
+		</transition>
+		<transition id="id94">
+			<source ref="id91"/>
+			<target ref="id92"/>
+			<label kind="synchronisation" x="-76" y="-170">BillPT!</label>
+		</transition>
+		<transition id="id95">
+			<source ref="id90"/>
+			<target ref="id91"/>
+			<label kind="synchronisation" x="59" y="-170">NotifyPT?</label>
+			<label kind="assignment" x="35" y="-153">pt = 0</label>
+		</transition>
+		<transition id="id96">
+			<source ref="id88"/>
+			<target ref="id90"/>
+		</transition>
+		<transition id="id97">
+			<source ref="id89"/>
+			<target ref="id86"/>
+			<label kind="synchronisation" x="-221" y="-68">KeyPT?</label>
+			<label kind="assignment" x="-237" y="-42">m = 1</label>
+		</transition>
+		<transition id="id98">
+			<source ref="id87"/>
+			<target ref="id88"/>
+			<label kind="synchronisation" x="68" y="-59">CharAck!</label>
+			<label kind="assignment" x="52" y="-42">m = 0,
+m3 = 0</label>
+		</transition>
+		<transition id="id99">
+			<source ref="id86"/>
+			<target ref="id87"/>
+			<label kind="synchronisation" x="-85" y="-68">CharReq?</label>
+			<label kind="assignment" x="-85" y="-42">pt = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>RSU</name>
+		<location id="id100" x="-212" y="-59">
+			<name x="-222" y="-93">RSU</name>
+		</location>
+		<location id="id101" x="102" y="-59">
+			<name x="59" y="-93">ReceivedKey</name>
+			<label kind="invariant" x="119" y="-51">rt &lt;= 20</label>
+		</location>
+		<location id="id102" x="102" y="51">
+			<name x="68" y="68">SendKey</name>
+			<urgent/>
+		</location>
+		<location id="id103" x="-68" y="51">
+			<name x="-93" y="68">ReceivedBill</name>
+			<committed/>
+		</location>
+		<location id="id104" x="-212" y="51">
+			<name x="-238" y="68">SendBill</name>
+		</location>
+		<init ref="id100"/>
+		<transition id="id105">
+			<source ref="id101"/>
+			<target ref="id102"/>
+			<label kind="guard" x="102" y="8">m3 ==1</label>
+			<label kind="synchronisation" x="102" y="-21">KeyPT!</label>
+		</transition>
+		<transition id="id106">
+			<source ref="id104"/>
+			<target ref="id100"/>
+			<label kind="assignment" x="-212" y="-4">m2 = 1</label>
+		</transition>
+		<transition id="id107">
+			<source ref="id103"/>
+			<target ref="id104"/>
+			<label kind="synchronisation" x="-178" y="17">BillRSU!</label>
+		</transition>
+		<transition id="id108">
+			<source ref="id102"/>
+			<target ref="id103"/>
+			<label kind="synchronisation" x="-51" y="25">BillPT?</label>
+		</transition>
+		<transition id="id109">
+			<source ref="id100"/>
+			<target ref="id101"/>
+			<label kind="synchronisation" x="-85" y="-76">KeyRSU?</label>
+			<label kind="assignment" x="17" y="-59">rt = 0,
+m2 = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>EVE</name>
+		<location id="id110" x="-484" y="17">
+			<name x="-494" y="-17">EVE</name>
+		</location>
+		<location id="id111" x="110" y="-102">
+			<name x="68" y="-144">TCPReqReceived</name>
+			<label kind="invariant" x="100" y="-85">evet &lt;= 20</label>
+		</location>
+		<location id="id112" x="-34" y="-102">
+			<name x="-85" y="-144">TCPHandShake</name>
+			<label kind="invariant" x="-44" y="-85">evet &lt;= 20</label>
+		</location>
+		<location id="id113" x="-323" y="-102">
+			<name x="-383" y="-144">TLSReqRecived</name>
+			<label kind="invariant" x="-331" y="-85">evet &lt;= 20</label>
+		</location>
+		<location id="id114" x="-807" y="-102">
+			<name x="-833" y="-144">TLSReady</name>
+			<label kind="invariant" x="-817" y="-85">evet &lt;= 20</label>
+		</location>
+		<location id="id115" x="-807" y="17">
+			<name x="-841" y="34">ReceivedEVInfo</name>
+			<committed/>
+		</location>
+		<init ref="id110"/>
+		<transition id="id116">
+			<source ref="id113"/>
+			<target ref="id114"/>
+			<label kind="synchronisation" x="-569" y="-119">EVETLSAck!</label>
+			<label kind="assignment" x="-561" y="-102">evet = 0</label>
+		</transition>
+		<transition id="id117">
+			<source ref="id112"/>
+			<target ref="id113"/>
+			<label kind="synchronisation" x="-178" y="-119">TLSReq?</label>
+			<label kind="assignment" x="-195" y="-93">evet = 0</label>
+		</transition>
+		<transition id="id118">
+			<source ref="id110"/>
+			<target ref="id111"/>
+			<label kind="synchronisation" x="-127" y="-17">EVToEVETCPReq?</label>
+			<label kind="assignment" x="-466" y="17">evet = 0</label>
+			<nail x="110" y="17"/>
+		</transition>
+		<transition id="id119">
+			<source ref="id115"/>
+			<target ref="id110"/>
+		</transition>
+		<transition id="id120">
+			<source ref="id114"/>
+			<target ref="id115"/>
+			<label kind="synchronisation" x="-807" y="-59">AutReqtoEVE?</label>
+		</transition>
+		<transition id="id121">
+			<source ref="id111"/>
+			<target ref="id112"/>
+			<label kind="synchronisation" x="0" y="-119">EVETCPRes!</label>
+			<label kind="assignment" x="-16" y="-102">evet = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>EVEsdp</name>
+		<location id="id122" x="-238" y="-59">
+		</location>
+		<location id="id123" x="-59" y="-59">
+			<name x="-69" y="-93">DetectSDP</name>
+			<label kind="invariant" x="-69" y="-42">evesdpT &lt;= 10</label>
+		</location>
+		<location id="id124" x="94" y="-59">
+			<name x="84" y="-93">SendFakeResponse</name>
+			<committed/>
+		</location>
+		<init ref="id122"/>
+		<transition id="id125">
+			<source ref="id124"/>
+			<target ref="id123"/>
+			<label kind="guard" x="26" y="-148">evesdpT&lt;=ConcurSDPResThr</label>
+			<nail x="8" y="-170"/>
+		</transition>
+		<transition id="id126">
+			<source ref="id123"/>
+			<target ref="id122"/>
+			<label kind="guard" x="-127" y="-127">evesdpT &gt;= 3</label>
+			<nail x="-153" y="-153"/>
+		</transition>
+		<transition id="id127">
+			<source ref="id124"/>
+			<target ref="id122"/>
+			<label kind="guard" x="-25" y="8">evesdpT&gt;=ConcurSDPResThr</label>
+			<nail x="-102" y="34"/>
+		</transition>
+		<transition id="id128">
+			<source ref="id123"/>
+			<target ref="id124"/>
+			<label kind="synchronisation" x="-41" y="-76">EveSDPRes!</label>
+			<label kind="assignment" x="-41" y="-59">evet = 0</label>
+		</transition>
+		<transition id="id129">
+			<source ref="id122"/>
+			<target ref="id123"/>
+			<label kind="synchronisation" x="-202" y="-76">SDPReq?</label>
+			<label kind="assignment" x="-202" y="-59">evesdpT = 0</label>
+			<nail x="-220" y="-59"/>
+		</transition>
+	</template>
+	<template>
+		<name>EVE2</name>
+		<location id="id130" x="-697" y="-127">
+			<name x="-707" y="-161">EVE2</name>
+		</location>
+		<location id="id131" x="-425" y="-127">
+			<name x="-459" y="-161">Intercepted</name>
+			<committed/>
+		</location>
+		<init ref="id130"/>
+		<transition id="id132">
+			<source ref="id131"/>
+			<target ref="id130"/>
+			<nail x="-569" y="-68"/>
+		</transition>
+		<transition id="id133">
+			<source ref="id130"/>
+			<target ref="id131"/>
+			<label kind="synchronisation" x="-586" y="-144">CharReqGet?</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+//Process = Template();
+// List one or more processes to be composed into a system.
+system EV,CS,EVE,EVE2,PT, RSU, CSsdp, EVEsdp;
+</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment/>
+			<option key="--diagnostic" value="1"/>
+			<result outcome="success" type="quality" timestamp="2026-10-29 19:03:39 -0600">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] forall (i : id_t) local_ticket[i] &lt;= MaxServ</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-29 00:42:34 -0600">
+			</result>
+		</query>
+		<query>
+			<formula>A[] forall(i : id_t) (EV(i).TicketCheck imply serv == local_ticket[i])</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-29 00:41:21 -0600">
+			</result>
+		</query>
+		<query>
+			<formula>A&lt;&gt; forall(i : int[0, N-1]) (EV(i).SendReq imply EV(i).Charging)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-29 00:41:46 -0600">
+			</result>
+		</query>
+		<query>
+			<formula>A&lt;&gt; forall(i : id_t) (EV(i).SendReq imply EV(i).Fail)</formula>
+			<comment/>
+			<option key="--diagnostic" value="1"/>
+			<result outcome="success" type="quality" timestamp="2026-10-29 00:41:49 -0600">
+				<option key="--diagnostic" value="1"/>
+			</result>
+		</query>
+		<query>
+			<formula>A[] forall(i : int[0, N-1]) forall(j : int[0, N-1]) (i != j imply not (EV(i).Charging and EV(j).Charging))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-29 00:42:07 -0600">
+			</result>
+		</query>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+		<query>
+			<formula>A[] forall(i : int[0, N-1]) (EV(i).Charging imply EVclock[i] &lt;= 600)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-28 21:13:15 -0600">
+			</result>
+		</query>
+		<query>
+			<formula>A[] forall(i : int[0, N-1]) (EV(i).SendReq imply EVclock[i] &lt;= 20)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-10-28 21:13:46 -0600">
+			</result>
+		</query>
+		<query>
+			<formula>Pr[&lt;=100] (&lt;&gt; EV(0).TLSReady)</formula>
+			<comment/>
+			<option key="--diagnostic" value="1"/>
+			<result outcome="success" type="quantity" value="0.634857 ± 0.0488862 (95% CI)" timestamp="2026-10-29 19:25:22 -0600">
+				<option key="--diagnostic" value="1"/>
+				<details>0.634857 ± 0.0488862 (95% CI)</details>
+				<plot title="Probability Density Distribution" xaxis="run duration in time" yaxis="probability density">
+					<series title="density" type="b(5.597464)" color="0x0000ff" encoding="csv">10.310920763245461,9.161658777668791E-4
+15.908384336877937,4.5808293888343954E-4
+21.50584791051041,0.005038912327717834
+27.103311484142885,0.00916165877766879
+32.70077505777536,0.013284405227619745
+38.298238631407834,0.016032902860920382
+43.895702205040315,0.012826322288736307
+49.49316577867279,0.015116736983153503
+55.090629352305264,0.007329327022135033
+60.68809292593774,0.00916165877766879
+66.2855564995702,0.005038912327717834
+71.88302007320269,0.0018323317555337581
+77.48048364683517,0.0032065805721840767
+83.07794722046764,0.004580829388834395
+88.67541079410012,0.005496995266601274
+94.27287436773258,0.004122746449950956
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">52.64570776946798,0.0
+52.64570776946798,0.016032902860920382
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=5.5975, bucket count=16
+Runs: 390 in total, 248 (63.59%) displayed, 142 (36.41%) remaining
+Span of displayed sample: [10.31, 99.87]
+Mean estimate of displayed sample: 52.65 ± 2.51 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Density Confidence Intervals" xaxis="run duration in time" yaxis="probability density">
+					<series title="upper limit" type="b(5.597464)" color="0xa0a0ff" encoding="csv">10.310920763245461,0.01840116917505983
+15.908384336877937,0.014202812785023673
+21.50584791051041,0.04990551749357675
+27.103311484142885,0.07809216976784364
+32.70077505777536,0.10504765381621131
+38.298238631407834,0.1226007037130517
+43.895702205040315,0.1020938858892363
+49.49316577867279,0.11677973937869718
+55.090629352305264,0.065769413442232
+60.68809292593774,0.07809216976784364
+66.2855564995702,0.04990551749357675
+71.88302007320269,0.02605098405747639
+77.48048364683517,0.036630085462476356
+83.07794722046764,0.046648148905627865
+88.67541079410012,0.05313043821639521
+94.27287436773258,0.04335384266262098
+					</series>
+					<series title="lower limit" type="b(5.597464)" color="0x0000ff" encoding="csv">10.310920763245461,6.216539183027736E-4
+15.908384336877937,6.491534927749921E-5
+21.50584791051041,0.014162214383178419
+27.103311484142885,0.03160219823028946
+32.70077505777536,0.0503622535927671
+38.298238631407834,0.06330625356115595
+43.895702205040315,0.04823437891545015
+49.49316577867279,0.058960332920587645
+55.090629352305264,0.02362853697947942
+60.68809292593774,0.03160219823028946
+66.2855564995702,0.014162214383178419
+71.88302007320269,0.0028013991635239817
+77.48048364683517,0.007246007407418762
+83.07794722046764,0.012362840183128523
+88.67541079410012,0.015997944708320704
+94.27287436773258,0.010605288178707943
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">52.64570776946798,0.0
+52.64570776946798,0.02190290335976049
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=5.5975, bucket count=16
+Runs: 390 in total, 248 (63.59%) displayed, 142 (36.41%) remaining
+Span of displayed sample: [10.31, 99.87]
+Mean estimate of displayed sample: 52.65 ± 2.51 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Distribution" xaxis="run duration in time" yaxis="probability">
+					<series title="probability" type="b(5.597464)" color="0x0000ff" encoding="csv">10.310920763245461,0.005128205128205128
+15.908384336877937,0.002564102564102564
+21.50584791051041,0.028205128205128206
+27.103311484142885,0.05128205128205128
+32.70077505777536,0.07435897435897436
+38.298238631407834,0.08974358974358974
+43.895702205040315,0.07179487179487179
+49.49316577867279,0.08461538461538462
+55.090629352305264,0.041025641025641026
+60.68809292593774,0.05128205128205128
+66.2855564995702,0.028205128205128206
+71.88302007320269,0.010256410256410256
+77.48048364683517,0.017948717948717947
+83.07794722046764,0.02564102564102564
+88.67541079410012,0.03076923076923077
+94.27287436773258,0.023076923076923078
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">52.64570776946798,0.0
+52.64570776946798,0.08974358974358974
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=5.5975, bucket count=16
+Runs: 390 in total, 248 (63.59%) displayed, 142 (36.41%) remaining
+Span of displayed sample: [10.31, 99.87]
+Mean estimate of displayed sample: 52.65 ± 2.51 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
+					<series title="upper limit" type="b(5.597464)" color="0xa0a0ff" encoding="csv">10.310920763245461,0.01840116917505983
+15.908384336877937,0.014202812785023673
+21.50584791051041,0.04990551749357675
+27.103311484142885,0.07809216976784364
+32.70077505777536,0.10504765381621131
+38.298238631407834,0.1226007037130517
+43.895702205040315,0.1020938858892363
+49.49316577867279,0.11677973937869718
+55.090629352305264,0.065769413442232
+60.68809292593774,0.07809216976784364
+66.2855564995702,0.04990551749357675
+71.88302007320269,0.02605098405747639
+77.48048364683517,0.036630085462476356
+83.07794722046764,0.046648148905627865
+88.67541079410012,0.05313043821639521
+94.27287436773258,0.04335384266262098
+					</series>
+					<series title="lower limit" type="b(5.597464)" color="0x0000ff" encoding="csv">10.310920763245461,6.216539183027736E-4
+15.908384336877937,6.491534927749921E-5
+21.50584791051041,0.014162214383178419
+27.103311484142885,0.03160219823028946
+32.70077505777536,0.0503622535927671
+38.298238631407834,0.06330625356115595
+43.895702205040315,0.04823437891545015
+49.49316577867279,0.058960332920587645
+55.090629352305264,0.02362853697947942
+60.68809292593774,0.03160219823028946
+66.2855564995702,0.014162214383178419
+71.88302007320269,0.0028013991635239817
+77.48048364683517,0.007246007407418762
+83.07794722046764,0.012362840183128523
+88.67541079410012,0.015997944708320704
+94.27287436773258,0.010605288178707943
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">52.64570776946798,0.0
+52.64570776946798,0.1226007037130517
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=5.5975, bucket count=16
+Runs: 390 in total, 248 (63.59%) displayed, 142 (36.41%) remaining
+Span of displayed sample: [10.31, 99.87]
+Mean estimate of displayed sample: 52.65 ± 2.51 (95% CI)</comment>
+				</plot>
+				<plot title="Cumulative Probability Distribution" xaxis="run duration in time" yaxis="probability">
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">10.310920763245461,0.0
+15.908384336877937,0.005128205128205128
+21.50584791051041,0.007692307692307693
+27.103311484142885,0.035897435897435895
+32.70077505777536,0.08717948717948718
+38.298238631407834,0.16153846153846155
+43.895702205040315,0.2512820512820513
+49.49316577867279,0.3230769230769231
+55.090629352305264,0.4076923076923077
+60.68809292593774,0.44871794871794873
+66.2855564995702,0.5
+71.88302007320269,0.5282051282051282
+77.48048364683517,0.5384615384615384
+83.07794722046764,0.5564102564102564
+88.67541079410012,0.5820512820512821
+94.27287436773258,0.6128205128205129
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">52.64570776946798,0.0
+52.64570776946798,0.6358974358974359
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=5.5975, bucket count=16
+Runs: 390 in total, 248 (63.59%) displayed, 142 (36.41%) remaining
+Span of displayed sample: [10.31, 99.87]
+Mean estimate of displayed sample: 52.65 ± 2.51 (95% CI)</comment>
+				</plot>
+				<plot title="Cumulative Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
+					<series title="upper limit" type="k" color="0x0000dd" encoding="csv">10.310920763245461,0.009414072798470457
+15.908384336877937,0.01840116917505983
+21.50584791051041,0.022314505330954054
+27.103311484142885,0.0594968087937919
+32.70077505777536,0.11969372823890649
+38.298238631407834,0.2018909009874691
+43.895702205040315,0.29740329953677214
+49.49316577867279,0.3719848965674607
+55.090629352305264,0.45829295322823455
+60.68809292593774,0.49959216695752706
+66.2855564995702,0.5507421939860265
+71.88302007320269,0.5786532158637071
+77.48048364683517,0.5887636348538231
+83.07794722046764,0.6064063982407535
+88.67541079410012,0.6314976380362508
+94.27287436773258,0.6614281282453921
+					</series>
+					<series title="lower limit" type="k" color="0xdd0000" encoding="csv">10.310920763245461,0.0
+15.908384336877937,6.216539183027736E-4
+21.50584791051041,0.0015891567646893123
+27.103311484142885,0.019761885311082767
+32.70077505777536,0.06112965422828863
+38.298238631407834,0.1264190732635414
+43.895702205040315,0.20898148817335058
+49.49316577867279,0.276879548008458
+55.090629352305264,0.3585035550764107
+60.68809292593774,0.39862780946770127
+66.2855564995702,0.4492578060139735
+71.88302007320269,0.4773258482963573
+77.48048364683517,0.48757142670401993
+83.07794722046764,0.5055515966446535
+88.67541079410012,0.5313500606027538
+94.27287436773258,0.562486754624842
+					</series>
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">10.310920763245461,0.0
+15.908384336877937,0.005128205128205128
+21.50584791051041,0.007692307692307693
+27.103311484142885,0.035897435897435895
+32.70077505777536,0.08717948717948718
+38.298238631407834,0.16153846153846155
+43.895702205040315,0.2512820512820513
+49.49316577867279,0.3230769230769231
+55.090629352305264,0.4076923076923077
+60.68809292593774,0.44871794871794873
+66.2855564995702,0.5
+71.88302007320269,0.5282051282051282
+77.48048364683517,0.5384615384615384
+83.07794722046764,0.5564102564102564
+88.67541079410012,0.5820512820512821
+94.27287436773258,0.6128205128205129
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">52.64570776946798,0.0
+52.64570776946798,0.6358974358974359
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=5.5975, bucket count=16
+Runs: 390 in total, 248 (63.59%) displayed, 142 (36.41%) remaining
+Span of displayed sample: [10.31, 99.87]
+Mean estimate of displayed sample: 52.65 ± 2.51 (95% CI)</comment>
+				</plot>
+				<plot title="Frequency Histogram" xaxis="run duration in time" yaxis="count">
+					<series title="count" type="b(5.597464)" color="0x0000ff" encoding="csv">10.310920763245461,2.0
+15.908384336877937,1.0
+21.50584791051041,11.0
+27.103311484142885,20.0
+32.70077505777536,29.0
+38.298238631407834,35.0
+43.895702205040315,28.0
+49.49316577867279,33.0
+55.090629352305264,16.0
+60.68809292593774,20.0
+66.2855564995702,11.0
+71.88302007320269,4.0
+77.48048364683517,7.0
+83.07794722046764,10.0
+88.67541079410012,12.0
+94.27287436773258,9.0
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">52.64570776946798,0.0
+52.64570776946798,35.0
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=5.5975, bucket count=16
+Runs: 390 in total, 248 (63.59%) displayed, 142 (36.41%) remaining
+Span of displayed sample: [10.31, 99.87]
+Mean estimate of displayed sample: 52.65 ± 2.51 (95% CI)</comment>
+				</plot>
+			</result>
+		</query>
+		<query>
+			<formula>Pr[&lt;=21] (&lt;&gt; EV(0).EVESDPResponse)</formula>
+			<comment/>
+			<option key="--diagnostic" value="1"/>
+		</query>
+		<query>
+			<formula>Pr[&lt;=22] (&lt;&gt; EV(0).TLSHandShake)</formula>
+			<comment/>
+			<option key="--diagnostic" value="1"/>
+			<result outcome="success" type="quantity" value="0.0789868 ± 0.0417609 (95% CI)" timestamp="2026-10-29 17:28:03 -0600">
+				<option key="--diagnostic" value="1"/>
+				<details>0.0789868 ± 0.0417609 (95% CI)</details>
+				<plot title="Probability Density Distribution" xaxis="run duration in time" yaxis="probability density">
+					<series title="density" type="b(3.374745)" color="0x0000ff" encoding="csv">7.687289983459219,0.005260095051801686
+11.062034948164865,0.005260095051801686
+14.436779912870513,0.0017533650172672287
+17.811524877576158,0.008766825086336144
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">14.946983934704958,0.0
+14.946983934704958,0.008766825086336144
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=3.3747, bucket count=4
+Runs: 169 in total, 12 (7.1006%) displayed, 157 (92.899%) remaining
+Span of displayed sample: [7.687, 21.19]
+Mean estimate of displayed sample: 14.95 ± 2.955 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Density Confidence Intervals" xaxis="run duration in time" yaxis="probability density">
+					<series title="upper limit" type="b(3.374745)" color="0xa0a0ff" encoding="csv">7.687289983459219,0.05099872759553871
+11.062034948164865,0.05099872759553871
+14.436779912870513,0.032525826830656294
+17.811524877576158,0.0676900044954075
+					</series>
+					<series title="lower limit" type="b(3.374745)" color="0x0000ff" encoding="csv">7.687289983459219,0.003675849842754643
+11.062034948164865,0.003675849842754643
+14.436779912870513,1.4979829381493156E-4
+17.811524877576158,0.009674813251688593
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">14.946983934704958,0.0
+14.946983934704958,0.020057813317253616
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=3.3747, bucket count=4
+Runs: 169 in total, 12 (7.1006%) displayed, 157 (92.899%) remaining
+Span of displayed sample: [7.687, 21.19]
+Mean estimate of displayed sample: 14.95 ± 2.955 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Distribution" xaxis="run duration in time" yaxis="probability">
+					<series title="probability" type="b(3.374745)" color="0x0000ff" encoding="csv">7.687289983459219,0.01775147928994083
+11.062034948164865,0.01775147928994083
+14.436779912870513,0.005917159763313609
+17.811524877576158,0.029585798816568046
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">14.946983934704958,0.0
+14.946983934704958,0.029585798816568046
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=3.3747, bucket count=4
+Runs: 169 in total, 12 (7.1006%) displayed, 157 (92.899%) remaining
+Span of displayed sample: [7.687, 21.19]
+Mean estimate of displayed sample: 14.95 ± 2.955 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
+					<series title="upper limit" type="b(3.374745)" color="0xa0a0ff" encoding="csv">7.687289983459219,0.05099872759553871
+11.062034948164865,0.05099872759553871
+14.436779912870513,0.032525826830656294
+17.811524877576158,0.0676900044954075
+					</series>
+					<series title="lower limit" type="b(3.374745)" color="0x0000ff" encoding="csv">7.687289983459219,0.003675849842754643
+11.062034948164865,0.003675849842754643
+14.436779912870513,1.4979829381493156E-4
+17.811524877576158,0.009674813251688593
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">14.946983934704958,0.0
+14.946983934704958,0.0676900044954075
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=3.3747, bucket count=4
+Runs: 169 in total, 12 (7.1006%) displayed, 157 (92.899%) remaining
+Span of displayed sample: [7.687, 21.19]
+Mean estimate of displayed sample: 14.95 ± 2.955 (95% CI)</comment>
+				</plot>
+				<plot title="Cumulative Probability Distribution" xaxis="run duration in time" yaxis="probability">
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">7.687289983459219,0.0
+11.062034948164865,0.01775147928994083
+14.436779912870513,0.03550295857988166
+17.811524877576158,0.04142011834319527
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">14.946983934704958,0.0
+14.946983934704958,0.07100591715976334
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=3.3747, bucket count=4
+Runs: 169 in total, 12 (7.1006%) displayed, 157 (92.899%) remaining
+Span of displayed sample: [7.687, 21.19]
+Mean estimate of displayed sample: 14.95 ± 2.955 (95% CI)</comment>
+				</plot>
+				<plot title="Cumulative Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
+					<series title="upper limit" type="k" color="0x0000dd" encoding="csv">7.687289983459219,0.021591188948230828
+11.062034948164865,0.05099872759553871
+14.436779912870513,0.07567040443330894
+17.811524877576158,0.08347672737008922
+					</series>
+					<series title="lower limit" type="k" color="0xdd0000" encoding="csv">7.687289983459219,0.0
+11.062034948164865,0.003675849842754643
+14.436779912870513,0.013138432043190583
+17.811524877576158,0.01681271984837295
+					</series>
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">7.687289983459219,0.0
+11.062034948164865,0.01775147928994083
+14.436779912870513,0.03550295857988166
+17.811524877576158,0.04142011834319527
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">14.946983934704958,0.0
+14.946983934704958,0.07100591715976334
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=3.3747, bucket count=4
+Runs: 169 in total, 12 (7.1006%) displayed, 157 (92.899%) remaining
+Span of displayed sample: [7.687, 21.19]
+Mean estimate of displayed sample: 14.95 ± 2.955 (95% CI)</comment>
+				</plot>
+				<plot title="Frequency Histogram" xaxis="run duration in time" yaxis="count">
+					<series title="count" type="b(3.374745)" color="0x0000ff" encoding="csv">7.687289983459219,3.0
+11.062034948164865,3.0
+14.436779912870513,1.0
+17.811524877576158,5.0
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">14.946983934704958,0.0
+14.946983934704958,5.0
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=3.3747, bucket count=4
+Runs: 169 in total, 12 (7.1006%) displayed, 157 (92.899%) remaining
+Span of displayed sample: [7.687, 21.19]
+Mean estimate of displayed sample: 14.95 ± 2.955 (95% CI)</comment>
+				</plot>
+			</result>
+		</query>
+		<query>
+			<formula>Pr[&lt;=22] (&lt;&gt; EV(0).ReceivedSDPResponse)</formula>
+			<comment/>
+			<result outcome="success" type="quantity" value="0.517199 ± 0.0498098 (95% CI)" timestamp="2026-10-29 18:21:18 -0600">
+				<details>0.517199 ± 0.0498098 (95% CI)</details>
+				<plot title="Probability Density Distribution" xaxis="run duration in time" yaxis="probability density">
+					<series title="density" type="b(1.458127)" color="0x0000ff" encoding="csv">0.09320509457029404,0.06450698398257024
+1.551332573697343,0.09845802818392299
+3.0094600528243918,0.035648596411420395
+4.467587531951441,0.027160835361082204
+5.9257150110784895,0.03734614862148803
+7.383842490205538,0.027160835361082204
+8.841969969332588,0.022068178730879292
+10.300097448459637,0.013580417680541102
+11.758224927586685,0.008487761050338188
+13.216352406713733,0.0016975522100676377
+14.674479885840782,0.0033951044201352754
+16.132607364967832,0.006790208840270551
+17.590734844094882,0.0
+19.04886232322193,0.0016975522100676377
+20.50698980234898,0.006790208840270551
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">5.282210031966672,0.0
+5.282210031966672,0.09845802818392299
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.4581, bucket count=15
+Runs: 404 in total, 209 (51.733%) displayed, 195 (48.267%) remaining
+Span of displayed sample: [0.09321, 21.97]
+Mean estimate of displayed sample: 5.282 ± 0.6163 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Density Confidence Intervals" xaxis="run duration in time" yaxis="probability density">
+					<series title="upper limit" type="b(1.458127)" color="0xa0a0ff" encoding="csv">0.09320509457029404,0.1268158765110741
+1.551332573697343,0.1816033899492683
+3.0094600528243918,0.07836210825790618
+4.467587531951441,0.0635188662683598
+5.9257150110784895,0.08128809871415461
+7.383842490205538,0.0635188662683598
+8.841969969332588,0.05439719281620847
+10.300097448459637,0.038643612793983186
+11.758224927586685,0.02864429520066416
+13.216352406713733,0.013713418760243613
+14.674479885840782,0.01776762866855746
+16.132607364967832,0.025155214970209068
+17.590734844094882,0.009089329753605269
+19.04886232322193,0.013713418760243613
+20.50698980234898,0.025155214970209068
+					</series>
+					<series title="lower limit" type="b(1.458127)" color="0x0000ff" encoding="csv">0.09320509457029404,0.0674234723223038
+1.551332573697343,0.11085302314107959
+3.0094600528243918,0.03246088592245493
+4.467587531951441,0.02280365044797926
+5.9257150110784895,0.03443789422978568
+7.383842490205538,0.02280365044797926
+8.841969969332588,0.017242604238172195
+10.300097448459637,0.008586916006901856
+11.758224927586685,0.004030411114447761
+13.216352406713733,6.266587795710816E-5
+14.674479885840782,6.000911979088712E-4
+16.132607364967832,0.002704090125951999
+17.590734844094882,0.0
+19.04886232322193,6.266587795710816E-5
+20.50698980234898,0.002704090125951999
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">5.282210031966672,0.0
+5.282210031966672,0.12454561932951881
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.4581, bucket count=15
+Runs: 404 in total, 209 (51.733%) displayed, 195 (48.267%) remaining
+Span of displayed sample: [0.09321, 21.97]
+Mean estimate of displayed sample: 5.282 ± 0.6163 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Distribution" xaxis="run duration in time" yaxis="probability">
+					<series title="probability" type="b(1.458127)" color="0x0000ff" encoding="csv">0.09320509457029404,0.09405940594059406
+1.551332573697343,0.14356435643564355
+3.0094600528243918,0.05198019801980198
+4.467587531951441,0.039603960396039604
+5.9257150110784895,0.054455445544554455
+7.383842490205538,0.039603960396039604
+8.841969969332588,0.03217821782178218
+10.300097448459637,0.019801980198019802
+11.758224927586685,0.012376237623762377
+13.216352406713733,0.0024752475247524753
+14.674479885840782,0.0049504950495049506
+16.132607364967832,0.009900990099009901
+17.590734844094882,0.0
+19.04886232322193,0.0024752475247524753
+20.50698980234898,0.009900990099009901
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">5.282210031966672,0.0
+5.282210031966672,0.14356435643564355
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.4581, bucket count=15
+Runs: 404 in total, 209 (51.733%) displayed, 195 (48.267%) remaining
+Span of displayed sample: [0.09321, 21.97]
+Mean estimate of displayed sample: 5.282 ± 0.6163 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
+					<series title="upper limit" type="b(1.458127)" color="0xa0a0ff" encoding="csv">0.09320509457029404,0.1268158765110741
+1.551332573697343,0.1816033899492683
+3.0094600528243918,0.07836210825790618
+4.467587531951441,0.0635188662683598
+5.9257150110784895,0.08128809871415461
+7.383842490205538,0.0635188662683598
+8.841969969332588,0.05439719281620847
+10.300097448459637,0.038643612793983186
+11.758224927586685,0.02864429520066416
+13.216352406713733,0.013713418760243613
+14.674479885840782,0.01776762866855746
+16.132607364967832,0.025155214970209068
+17.590734844094882,0.009089329753605269
+19.04886232322193,0.013713418760243613
+20.50698980234898,0.025155214970209068
+					</series>
+					<series title="lower limit" type="b(1.458127)" color="0x0000ff" encoding="csv">0.09320509457029404,0.0674234723223038
+1.551332573697343,0.11085302314107959
+3.0094600528243918,0.03246088592245493
+4.467587531951441,0.02280365044797926
+5.9257150110784895,0.03443789422978568
+7.383842490205538,0.02280365044797926
+8.841969969332588,0.017242604238172195
+10.300097448459637,0.008586916006901856
+11.758224927586685,0.004030411114447761
+13.216352406713733,6.266587795710816E-5
+14.674479885840782,6.000911979088712E-4
+16.132607364967832,0.002704090125951999
+17.590734844094882,0.0
+19.04886232322193,6.266587795710816E-5
+20.50698980234898,0.002704090125951999
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">5.282210031966672,0.0
+5.282210031966672,0.1816033899492683
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.4581, bucket count=15
+Runs: 404 in total, 209 (51.733%) displayed, 195 (48.267%) remaining
+Span of displayed sample: [0.09321, 21.97]
+Mean estimate of displayed sample: 5.282 ± 0.6163 (95% CI)</comment>
+				</plot>
+				<plot title="Cumulative Probability Distribution" xaxis="run duration in time" yaxis="probability">
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">0.09320509457029404,0.0
+1.551332573697343,0.09405940594059406
+3.0094600528243918,0.2376237623762376
+4.467587531951441,0.2896039603960396
+5.9257150110784895,0.3292079207920792
+7.383842490205538,0.38366336633663367
+8.841969969332588,0.42326732673267325
+10.300097448459637,0.45544554455445546
+11.758224927586685,0.4752475247524752
+13.216352406713733,0.4876237623762376
+14.674479885840782,0.4900990099009901
+16.132607364967832,0.49504950495049505
+17.590734844094882,0.504950495049505
+19.04886232322193,0.504950495049505
+20.50698980234898,0.5074257425742574
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">5.282210031966672,0.0
+5.282210031966672,0.5173267326732673
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.4581, bucket count=15
+Runs: 404 in total, 209 (51.733%) displayed, 195 (48.267%) remaining
+Span of displayed sample: [0.09321, 21.97]
+Mean estimate of displayed sample: 5.282 ± 0.6163 (95% CI)</comment>
+				</plot>
+				<plot title="Cumulative Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
+					<series title="upper limit" type="k" color="0x0000dd" encoding="csv">0.09320509457029404,0.009089329753605269
+1.551332573697343,0.1268158765110741
+3.0094600528243918,0.282203097198094
+4.467587531951441,0.33650172956769003
+5.9257150110784895,0.3773948717930783
+7.383842490205538,0.4330313152439321
+8.841969969332588,0.47309842619910786
+10.300097448459637,0.5054203668163507
+11.758224927586685,0.525209609967082
+13.216352406713733,0.5375391265735059
+14.674479885840782,0.5400014627556102
+16.132607364967832,0.5449225713029626
+17.590734844094882,0.5547505374301427
+19.04886232322193,0.5547505374301427
+20.50698980234898,0.5572045598904902
+					</series>
+					<series title="lower limit" type="k" color="0xdd0000" encoding="csv">0.09320509457029404,0.0
+1.551332573697343,0.0674234723223038
+3.0094600528243918,0.19693593356490716
+4.467587531951441,0.24581969602970136
+5.9257150110784895,0.2835453681707019
+7.383842490205538,0.3360130035326944
+8.841969969332588,0.37456852462854656
+10.300097448459637,0.40612801974629265
+11.758224927586685,0.4256505729593953
+13.216352406713733,0.4378909595899088
+14.674479885840782,0.44034260566711436
+16.132607364967832,0.4452494625698573
+17.590734844094882,0.4550774286970374
+19.04886232322193,0.4550774286970374
+20.50698980234898,0.4575373890887178
+					</series>
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">0.09320509457029404,0.0
+1.551332573697343,0.09405940594059406
+3.0094600528243918,0.2376237623762376
+4.467587531951441,0.2896039603960396
+5.9257150110784895,0.3292079207920792
+7.383842490205538,0.38366336633663367
+8.841969969332588,0.42326732673267325
+10.300097448459637,0.45544554455445546
+11.758224927586685,0.4752475247524752
+13.216352406713733,0.4876237623762376
+14.674479885840782,0.4900990099009901
+16.132607364967832,0.49504950495049505
+17.590734844094882,0.504950495049505
+19.04886232322193,0.504950495049505
+20.50698980234898,0.5074257425742574
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">5.282210031966672,0.0
+5.282210031966672,0.5173267326732673
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.4581, bucket count=15
+Runs: 404 in total, 209 (51.733%) displayed, 195 (48.267%) remaining
+Span of displayed sample: [0.09321, 21.97]
+Mean estimate of displayed sample: 5.282 ± 0.6163 (95% CI)</comment>
+				</plot>
+				<plot title="Frequency Histogram" xaxis="run duration in time" yaxis="count">
+					<series title="count" type="b(1.458127)" color="0x0000ff" encoding="csv">0.09320509457029404,38.0
+1.551332573697343,58.0
+3.0094600528243918,21.0
+4.467587531951441,16.0
+5.9257150110784895,22.0
+7.383842490205538,16.0
+8.841969969332588,13.0
+10.300097448459637,8.0
+11.758224927586685,5.0
+13.216352406713733,1.0
+14.674479885840782,2.0
+16.132607364967832,4.0
+17.590734844094882,0.0
+19.04886232322193,1.0
+20.50698980234898,4.0
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">5.282210031966672,0.0
+5.282210031966672,58.0
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.4581, bucket count=15
+Runs: 404 in total, 209 (51.733%) displayed, 195 (48.267%) remaining
+Span of displayed sample: [0.09321, 21.97]
+Mean estimate of displayed sample: 5.282 ± 0.6163 (95% CI)</comment>
+				</plot>
+			</result>
+		</query>
+		<query>
+			<formula>Pr[&lt;=22] (&lt;&gt; CS.TCPHandShake)</formula>
+			<comment/>
+			<result outcome="success" type="quantity" value="0.210141 ± 0.047062 (95% CI)" timestamp="2026-10-29 18:21:22 -0600">
+				<details>0.210141 ± 0.047062 (95% CI)</details>
+				<plot title="Probability Density Distribution" xaxis="run duration in time" yaxis="probability density">
+					<series title="density" type="b(2.335344)" color="0x0000ff" encoding="csv">3.202274052707657,0.0014085608015437857
+5.537617816786039,0.0070428040077189285
+7.87296158086442,0.008451364809262714
+10.2083053449428,0.0070428040077189285
+12.543649109021182,0.008451364809262714
+14.878992873099563,0.018311290420069213
+17.214336637177947,0.015494168816981643
+19.549680401256328,0.02253697282470057
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">15.371067836268143,0.0
+15.371067836268143,0.022536972824700567
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.3353, bucket count=8
+Runs: 304 in total, 63 (20.724%) displayed, 241 (79.276%) remaining
+Span of displayed sample: [3.202, 21.89]
+Mean estimate of displayed sample: 15.37 ± 1.184 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Density Confidence Intervals" xaxis="run duration in time" yaxis="probability density">
+					<series title="upper limit" type="b(2.335344)" color="0xa0a0ff" encoding="csv">3.202274052707657,0.018190557160775882
+5.537617816786039,0.03796321548622676
+7.87296158086442,0.04246162303746509
+10.2083053449428,0.03796321548622676
+12.543649109021182,0.04246162303746509
+14.878992873099563,0.07201624568057394
+17.214336637177947,0.06382004867243063
+19.549680401256328,0.08406492056916244
+					</series>
+					<series title="lower limit" type="b(2.335344)" color="0x0000ff" encoding="csv">3.202274052707657,8.327879523481405E-5
+5.537617816786039,0.005361433578008737
+7.87296158086442,0.0072766816895196524
+10.2083053449428,0.005361433578008737
+12.543649109021182,0.0072766816895196524
+14.878992873099563,0.02296300851849159
+17.214336637177947,0.018198944410549377
+19.549680401256328,0.030379184273015267
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">15.371067836268143,0.0
+15.371067836268143,0.035996807777178695
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.3353, bucket count=8
+Runs: 304 in total, 63 (20.724%) displayed, 241 (79.276%) remaining
+Span of displayed sample: [3.202, 21.89]
+Mean estimate of displayed sample: 15.37 ± 1.184 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Distribution" xaxis="run duration in time" yaxis="probability">
+					<series title="probability" type="b(2.335344)" color="0x0000ff" encoding="csv">3.202274052707657,0.003289473684210526
+5.537617816786039,0.01644736842105263
+7.87296158086442,0.019736842105263157
+10.2083053449428,0.01644736842105263
+12.543649109021182,0.019736842105263157
+14.878992873099563,0.04276315789473684
+17.214336637177947,0.03618421052631579
+19.549680401256328,0.05263157894736842
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">15.371067836268143,0.0
+15.371067836268143,0.05263157894736842
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.3353, bucket count=8
+Runs: 304 in total, 63 (20.724%) displayed, 241 (79.276%) remaining
+Span of displayed sample: [3.202, 21.89]
+Mean estimate of displayed sample: 15.37 ± 1.184 (95% CI)</comment>
+				</plot>
+				<plot title="Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
+					<series title="upper limit" type="b(2.335344)" color="0xa0a0ff" encoding="csv">3.202274052707657,0.018190557160775882
+5.537617816786039,0.03796321548622676
+7.87296158086442,0.04246162303746509
+10.2083053449428,0.03796321548622676
+12.543649109021182,0.04246162303746509
+14.878992873099563,0.07201624568057394
+17.214336637177947,0.06382004867243063
+19.549680401256328,0.08406492056916244
+					</series>
+					<series title="lower limit" type="b(2.335344)" color="0x0000ff" encoding="csv">3.202274052707657,8.327879523481405E-5
+5.537617816786039,0.005361433578008737
+7.87296158086442,0.0072766816895196524
+10.2083053449428,0.005361433578008737
+12.543649109021182,0.0072766816895196524
+14.878992873099563,0.02296300851849159
+17.214336637177947,0.018198944410549377
+19.549680401256328,0.030379184273015267
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">15.371067836268143,0.0
+15.371067836268143,0.08406492056916244
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.3353, bucket count=8
+Runs: 304 in total, 63 (20.724%) displayed, 241 (79.276%) remaining
+Span of displayed sample: [3.202, 21.89]
+Mean estimate of displayed sample: 15.37 ± 1.184 (95% CI)</comment>
+				</plot>
+				<plot title="Cumulative Probability Distribution" xaxis="run duration in time" yaxis="probability">
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">3.202274052707657,0.0
+5.537617816786039,0.003289473684210526
+7.87296158086442,0.019736842105263157
+10.2083053449428,0.039473684210526314
+12.543649109021182,0.05592105263157895
+14.878992873099563,0.0756578947368421
+17.214336637177947,0.11842105263157894
+19.549680401256328,0.15460526315789475
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">15.371067836268143,0.0
+15.371067836268143,0.20723684210526316
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.3353, bucket count=8
+Runs: 304 in total, 63 (20.724%) displayed, 241 (79.276%) remaining
+Span of displayed sample: [3.202, 21.89]
+Mean estimate of displayed sample: 15.37 ± 1.184 (95% CI)</comment>
+				</plot>
+				<plot title="Cumulative Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
+					<series title="upper limit" type="k" color="0x0000dd" encoding="csv">3.202274052707657,0.0120611460742075
+5.537617816786039,0.018190557160775882
+7.87296158086442,0.04246162303746509
+10.2083053449428,0.06793687911327066
+12.543649109021182,0.08802712882732593
+14.878992873099563,0.11136265766574925
+17.214336637177947,0.16016038154013795
+19.549680401256328,0.2002354305815027
+					</series>
+					<series title="lower limit" type="k" color="0xdd0000" encoding="csv">3.202274052707657,0.0
+5.537617816786039,8.327879523481405E-5
+7.87296158086442,0.0072766816895196524
+10.2083053449428,0.02056019462439314
+12.543649109021182,0.032909901357998816
+14.878992873099563,0.048562898782705276
+17.214336637177947,0.08433464292128906
+19.549680401256328,0.11586307326240243
+					</series>
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">3.202274052707657,0.0
+5.537617816786039,0.003289473684210526
+7.87296158086442,0.019736842105263157
+10.2083053449428,0.039473684210526314
+12.543649109021182,0.05592105263157895
+14.878992873099563,0.0756578947368421
+17.214336637177947,0.11842105263157894
+19.549680401256328,0.15460526315789475
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">15.371067836268143,0.0
+15.371067836268143,0.20723684210526316
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.3353, bucket count=8
+Runs: 304 in total, 63 (20.724%) displayed, 241 (79.276%) remaining
+Span of displayed sample: [3.202, 21.89]
+Mean estimate of displayed sample: 15.37 ± 1.184 (95% CI)</comment>
+				</plot>
+				<plot title="Frequency Histogram" xaxis="run duration in time" yaxis="count">
+					<series title="count" type="b(2.335344)" color="0x0000ff" encoding="csv">3.202274052707657,1.0
+5.537617816786039,5.0
+7.87296158086442,6.0
+10.2083053449428,5.0
+12.543649109021182,6.0
+14.878992873099563,13.0
+17.214336637177947,11.0
+19.549680401256328,16.0
+					</series>
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">15.371067836268143,0.0
+15.371067836268143,16.0
+					</series>
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.3353, bucket count=8
+Runs: 304 in total, 63 (20.724%) displayed, 241 (79.276%) remaining
+Span of displayed sample: [3.202, 21.89]
+Mean estimate of displayed sample: 15.37 ± 1.184 (95% CI)</comment>
+				</plot>
+			</result>
+		</query>
+		<query>
+			<formula>Pr[&lt;=100] (&lt;&gt; EV(0).EveIntercept)</formula>
+			<comment/>
+			<option key="--diagnostic" value="1"/>
+		</query>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+	</queries>
+</nta>

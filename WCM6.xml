@@ -11,7 +11,7 @@ broadcast chan EveSDPRes, EVETCPRes, EVETCPAck;
 broadcast chan AutReq, AutAck, AutReject, CharAck, CharFail, CharEnd, AutReqtoEVE, CharReqGet;
 
 broadcast chan KeyRSU, NotifyPT, BillRSU, BillPT, KeyPT, CharFailEnd, PTCharFail;
-int Rand = fint(random(101.0));
+int Rand;
 double Rand2;
 const int N = 2;
 const int ConcurSDPResThr = 10;
@@ -214,7 +214,8 @@ Rand2 = random(100)</label>
 			<source ref="id15"/>
 			<target ref="id1"/>
 			<label kind="synchronisation" x="562" y="255">SDPReq!</label>
-			<label kind="assignment" x="535" y="272">EVclock[idEV] = 0</label>
+			<label kind="assignment" x="535" y="272">EVclock[idEV] = 0,
+Rand = fint(random(101.0))</label>
 		</transition>
 		<transition id="id38">
 			<source ref="id5"/>
@@ -803,7 +804,7 @@ system EV,CS,EVE,EVE2,PT, RSU, CSsdp, EVEsdp;
 			<comment/>
 		</query>
 		<query>
-			<formula>Pr[&lt;=100] (&lt;&gt; EV().Charging)</formula>
+			<formula>Pr[&lt;=600] (&lt;&gt; EV(0).Charging)</formula>
 			<comment/>
 		</query>
 		<query>
