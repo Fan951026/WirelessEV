@@ -781,8 +781,10 @@ system EV,CS,EVE,EVE2,PT, RSU, CSsdp, EVEsdp;
 			<option key="--diagnostic" value="1"/>
 		</query>
 		<query>
-			<formula/>
+			<formula>E&lt;&gt; forall(i:int[0,N-1]) EV(i).Charging</formula>
 			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-11-05 23:05:07 -0700">
+			</result>
 		</query>
 		<query>
 			<formula/>
