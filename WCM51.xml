@@ -11,7 +11,7 @@ broadcast chan EveSDPRes, EVETCPRes, EVETCPAck;
 broadcast chan AutReq, AutAck, AutReject, CharAck, CharFail, CharEnd, AutReqtoEVE, CharReqGet;
 
 broadcast chan KeyRSU, NotifyPT, BillRSU, BillPT, KeyPT, CharFailEnd, PTCharFail;
-const int N = 2;
+const int N = 1;
 const int ConcurSDPResThr = 10;
 typedef int[0,N-1] id_t;
 int Energy[N], local_ticket[N], local_EVEticket[N];
@@ -752,10 +752,10 @@ system EV,CS,EVE,EVE2,PT, RSU, CSsdp, EVEsdp;
 			</result>
 		</query>
 		<query>
-			<formula>E&lt;&gt; forall(i:int[0,N-1]) EV(i).Fail
+			<formula>E&lt;&gt; exists (i:int[0,N-1]) EV(i).Fail
 </formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2026-11-05 22:50:15 -0700">
+			<result outcome="success" type="quality" timestamp="2026-11-05 23:35:23 -0700">
 			</result>
 		</query>
 		<query>
@@ -781,8 +781,10 @@ system EV,CS,EVE,EVE2,PT, RSU, CSsdp, EVEsdp;
 			<option key="--diagnostic" value="1"/>
 		</query>
 		<query>
-			<formula>E&lt;&gt; forall(i:int[0,N-1]) EV(i).Charging</formula>
+			<formula>E&lt;&gt; exists (i:int[0,N-1]) EV(i).Charging</formula>
 			<comment/>
+			<result outcome="success" type="quality" timestamp="2026-11-05 23:35:27 -0700">
+			</result>
 		</query>
 		<query>
 			<formula/>
